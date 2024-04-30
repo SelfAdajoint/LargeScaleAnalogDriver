@@ -7,7 +7,7 @@ import Footer from "@/components/footer.vue";
 <template>
   <div class="container">
     <div class="header">
-      <Header />
+      <Header devid="09df2712"/>
     </div>
     <div class="voltstatus">
       <Voltstatus />
