@@ -4,14 +4,15 @@
       <el-col :span="3" v-for="n in 64" :key="n">
         <div class="grid-content-wrapper">
           <div class="grid-content">
-            <div>+0010.000 V</div>
+            <div>+{{volt[n]}} V</div>
             <div>+0100.000 mA</div>
             <div>+1000.000 mW</div>
             <!-- <div class="slider-demo-block">
               <el-slider v-model="value" show-input size="small" />
             </div> -->
             <div class="slider-demo-block">
-                <el-slider v-model="volt[n]" :min="0" :max="10" :step="0.001" size="small" />
+                <el-slider v-model="volt[n]" :min="0" :max="10" :step="0.001" size="small"
+                  :format-tooltip="formatTooltip" @change="setvolt(n)"/>
                 <el-input-number v-model="volt[n]" :min="0" :max="10" :precision="3" :step="0.001" size="small" />
             </div>
           </div>
@@ -23,7 +24,18 @@
 
 <script setup>
 import { ref, reactive, onMounted } from "vue";
-const volt = reactive(Array(64).fill(0));
+import axios from 'axios'
+
+const props = defineProps(["devid",]);
+const volt  = reactive(Array(64).fill(0));
+
+function formatTooltip(number){
+  return number.toFixed(3)
+}
+
+async function setvolt(n){
+  const res = await axios.get(`http://127.0.0.1:6661/setvolt?devid=${props.devid}&ch=${n}&V=${volt[n]}`);
+}
 
 onMounted(() => {
   console.log(volt)
@@ -45,21 +57,20 @@ onMounted(() => {
   border-radius: 8px;
 }
 .grid-content-wrapper {
-  padding-top: 75%; /* Height is 75% of the width, which makes the aspect ratio 4:3 */
-  position: relative;
   width: 100%;
 }
 .grid-content {
   border-radius: 4px;
-  position: absolute;
+/*  position: absolute;*/
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+  height: 110px;
   border: 1px solid #ccc;
   background-color: #ccc;
   padding: 10px;
-  box-sizing: border-box;
+  box-sizing: content-box;
   display: flex;
   flex-direction: column;
 }
@@ -72,6 +83,7 @@ onMounted(() => {
   align-items: center;
   padding: 5px;
 }
+
 
 /* .slider-demo-block {
 width: 100%;

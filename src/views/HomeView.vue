@@ -10,7 +10,7 @@ import Footer from "@/components/footer.vue";
       <Header devid="09df2712"/>
     </div>
     <div class="voltstatus">
-      <Voltstatus />
+      <Voltstatus devid="09df2712"/>
     </div>
     <div class="footer">
       <Footer />
