@@ -1,7 +1,7 @@
 <template>
   <div class="box">
     <el-row :gutter="20">
-      <el-col :span="3" v-for="n in 60" :key="n">
+      <el-col :span="3" v-for="n in 64" :key="n">
         <div class="grid-content-wrapper">
           <div class="grid-content">
             <div>+0010.000 V</div>
@@ -11,8 +11,8 @@
               <el-slider v-model="value" show-input size="small" />
             </div> -->
             <div class="slider-demo-block">
-                <el-slider v-model="value" size="small" />
-                <el-input-number v-model="value1" :min="0" :max="100" size="small" />
+                <el-slider v-model="volt[n]" :min="0" :max="10" :step="0.001" size="small" />
+                <el-input-number v-model="volt[n]" :min="0" :max="10" :precision="3" :step="0.001" size="small" />
             </div>
           </div>
         </div>
@@ -22,8 +22,12 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-const value = ref(0);
+import { ref, reactive, onMounted } from "vue";
+const volt = reactive(Array(64).fill(0));
+
+onMounted(() => {
+  console.log(volt)
+})
 
 </script>
 
