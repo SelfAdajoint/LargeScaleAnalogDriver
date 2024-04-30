@@ -16,11 +16,11 @@ async function emergencystop() {
 
 <template>
     <div class="header-page">
-        <h2 style="font-size: 40px;">自伴科技祝您拥有愉快的一天！</h2>
+        <h2 style="font-size: 40px;">Q101HM多通道大功率模拟信号驱动器</h2>
         <el-button type="danger" size="large" :icon="CircleCloseFilled" @click="emergencystop">急&nbsp;停</el-button>
-        <button class="border-none w-full bg-transparent cursor-pointer" @click="toggleDark">
+        <el-button class="border-none w-full bg-transparent cursor-pointer" @click="toggleDark()">
             <i inline-flex i="dark:ep-moon ep-sunny"/>
-        </button>
+        </el-button>
     </div>
 </template>
 
@@ -33,7 +33,7 @@ async function emergencystop() {
     align-items: center;
 
     h2{
-        margin-left: 60px;
+        margin-left: 20px;
     }
 
     .el-button{

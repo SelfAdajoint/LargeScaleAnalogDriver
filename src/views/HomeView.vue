@@ -32,6 +32,6 @@ import Footer from "@/components/footer.vue";
   flex: 1;
 }
 .footer {
-  height: 120px;
+  height: 40px;
 }
 </style>

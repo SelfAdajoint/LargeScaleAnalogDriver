@@ -3,9 +3,15 @@
 </script>
 
 <template>
-<div>footer</div>
+<div class="company">© 2024 北京自伴科技有限公司</div>
 </template>
 
 <style scoped>
-
+.company {
+    width: 100%;
+    margin-left: 20px;
+    font-weight: 400;
+    font-size: 12px;
+    color: #FFF;
+}
 </style>
