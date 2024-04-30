@@ -1,5 +1,5 @@
 <script setup  lang="ts">
-import { CircleCloseFilled } from '@element-plus/icons-vue'
+import { CircleCloseFilled,Sunny,Moon } from '@element-plus/icons-vue'
 import { ElButton } from 'element-plus'
 import axios from 'axios'
 import { useDark, useToggle } from "@vueuse/core";
@@ -18,9 +18,10 @@ async function emergencystop() {
     <div class="header-page">
         <h2 style="font-size: 40px;">Q101HM多通道大功率模拟信号驱动器</h2>
         <el-button type="danger" size="large" :icon="CircleCloseFilled" @click="emergencystop">急&nbsp;停</el-button>
-        <el-button class="border-none w-full bg-transparent cursor-pointer" @click="toggleDark()">
-            <i inline-flex i="dark:ep-moon ep-sunny"/>
-        </el-button>
+        <el-icon :size="60" @click="toggleDark()">
+            <Moon v-if="isDark"/>
+            <Sunny v-else />
+        </el-icon>
     </div>
 </template>
 
@@ -37,9 +38,13 @@ async function emergencystop() {
     }
 
     .el-button{
-        margin-right: 120px;
+        margin-right: 60px;
         height: 60px;
         font-size: 20px;
+    }
+
+    .el-icon{
+        margin-right: 60px;
     }
 }
 </style>
