@@ -6,9 +6,7 @@ import Footer from "@/components/footer.vue";
 
 <template>
   <div class="container">
-    <div class="header">
-      <Header devid="09df2712"/>
-    </div>
+    <Header devid="09df2712"/>
     <div class="voltstatus">
       <Voltstatus devid="09df2712"/>
     </div>
@@ -25,9 +23,7 @@ import Footer from "@/components/footer.vue";
   display: flex;
   flex-direction: column;
 }
-.header {
-  height: 120px;
-}
+
 .voltstatus {
   flex: 1;
 }

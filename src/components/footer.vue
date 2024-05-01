@@ -9,7 +9,7 @@
 <style scoped>
 .company {
     width: 100%;
-    margin-left: 20px;
+    padding-left: 20px;
     font-weight: 400;
     font-size: 12px;
     color: #FFF;

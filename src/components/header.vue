@@ -16,8 +16,9 @@ async function emergencystop() {
 
 <template>
     <div class="header-page">
-        <h2 style="font-size: 40px;">Q101HM多通道大功率模拟信号驱动器</h2>
-        <el-button type="danger" size="large" :icon="CircleCloseFilled" @click="emergencystop">急&nbsp;停</el-button>
+        <img src="/favicon.ico">
+        <h2>Q101HM Large-scale High Power Analog Driver</h2>
+        <el-button type="danger" size="large" :icon="CircleCloseFilled" @click="emergencystop">EMO</el-button>
         <el-icon :size="60" @click="toggleDark()">
             <Moon v-if="isDark"/>
             <Sunny v-else />
@@ -27,24 +28,30 @@ async function emergencystop() {
 
 <style scoped>
 .header-page {
+    height: 120px;
+    min-height: 120px;
     width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
 
+    img{
+        width: 60px;
+    }
+
     h2{
+        font-size: 2vw;
         margin-left: 20px;
     }
 
     .el-button{
-        margin-right: 60px;
         height: 60px;
         font-size: 20px;
     }
 
     .el-icon{
-        margin-right: 60px;
+
     }
 }
 </style>
