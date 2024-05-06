@@ -1,6 +1,6 @@
 <script setup  lang="ts">
 import { CircleCloseFilled,Sunny,Moon } from '@element-plus/icons-vue'
-import { ElButton } from 'element-plus'
+import { ElButton, ElNotification } from 'element-plus'
 import axios from 'axios'
 import { useDark, useToggle } from "@vueuse/core";
 
@@ -9,16 +9,46 @@ const toggleDark = useToggle(isDark)
 
 const props = defineProps(["devid",]);
 
-async function emergencystop() {
-  const res = await axios.get(`http://127.0.0.1:6661/emergencystop?devid=${props.devid}`);
+function emergencystop() {
+  axios.get(`http://127.0.0.1:6661/emergencystop?devid=${props.devid}`)
+  .then(res => {
+    if (!res.data.success){
+        console.log('emergency stop failed',res.data);
+        ElNotification({
+            title: 'Emergency stop failed!',
+            message: res.data.message,
+            type: 'error',
+        })
+    }else{
+        ElNotification({
+            title: 'Emergency stop success.',
+            type: 'success',
+        })
+    }
+  })
+  .catch(error => {
+    console.error('Emergency stop error:', error);
+    ElNotification({
+        title: 'Emergency stop failed!',
+        message: error,
+        type: 'error',
+    })
+  })
 }
 </script>
 
 <template>
     <div class="header-page">
-        <img src="/favicon.ico">
+        <img src="/favicon.ico" :class="{ 'invert': !isDark }">
         <h2>Q101HM Large-scale High Power Analog Driver</h2>
-        <el-button type="danger" size="large" :icon="CircleCloseFilled" @click="emergencystop">EMO</el-button>
+        <el-tooltip
+            class="box-item"
+            effect="light"
+            placement="left"
+            content="Set all Volts to zero."
+        >
+            <el-button type="danger" size="large" :icon="CircleCloseFilled" @click="emergencystop">EMO</el-button>
+        </el-tooltip>
         <el-icon :size="60" @click="toggleDark()">
             <Moon v-if="isDark"/>
             <Sunny v-else />
@@ -38,6 +68,10 @@ async function emergencystop() {
 
     img{
         width: 60px;
+    }
+
+    .invert {
+        filter: invert(100%);
     }
 
     h2{

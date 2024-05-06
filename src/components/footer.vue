@@ -3,7 +3,7 @@
 </script>
 
 <template>
-<div class="company">© 2024 北京自伴科技有限公司</div>
+<div class="company">© 2024 北京自伴科技有限公司 联系电话：18518941836</div>
 </template>
 
 <style scoped>

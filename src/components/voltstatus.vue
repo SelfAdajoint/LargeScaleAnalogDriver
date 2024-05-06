@@ -9,8 +9,12 @@
             <div>+ {{ formatNumber(amp[n],8,3) }} mA</div>
             <div>+ {{ formatNumber(volt[n]*amp[n],8,3) }} mW</div>
             <div class="slider-demo-block">
-                <el-slider v-model="volt[n]" :min="0" :max="10" :step="0.001" size="small"
-                  :format-tooltip="formatTooltip" @change="setvolt(n)"/>
+                <el-slider v-model="volt[n]" :min="0" :max="10" :step="0.01" size="small"
+                  :format-tooltip="formatTooltip"
+                  @change="setvolt(n)"
+                  @input="setvolt_debounce(n)"
+                  @mousedown="slidermousedown(n)"
+                  @mouseup="slidermouseup(n)"/>
                 <el-input-number v-model="volt[n]" :min="0" :max="10" :precision="3" :step="0.001" size="small"
                   @change="setvolt(n)"/>
             </div>
@@ -23,12 +27,8 @@
 
 <script setup>
 
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, onUnmounted } from "vue";
 import axios from 'axios'
-
-const props = defineProps(["devid",]);
-const volt  = reactive(Array(65).fill(0.0));
-const amp   = reactive(Array(65).fill(100.0));
 
 function formatTooltip(number){
   return number.toFixed(3)
@@ -43,12 +43,78 @@ function formatNumber(num, width, precision) {
   return formatted;
 }
 
+const props = defineProps(["devid",]);
+const volt  = reactive(Array(65).fill(0.0));
+const amp   = reactive(Array(65).fill(0.0));
+
 async function setvolt(n){
-  const res = await axios.get(`http://127.0.0.1:6661/setvolt?devid=${props.devid}&ch=${n}&V=${volt[n]}`);
+  axios.get(`http://127.0.0.1:6661/setvolt?devid=${props.devid}&ch=${n}&V=${volt[n]}`)
+  .then(res => {
+    if (!res.data.success){
+      console.log(`setvolt ch $n failed`,res.data)
+    }
+    setTimeout(()=>{getvolt(n);}, 50)
+  })
+  .catch(error => {
+    console.log(`error in setvolt ${n}`,error)
+  })
 }
 
+const volt_ms = reactive(Array(65).fill(0))
+
+function setvolt_debounce(n){
+  const curr_ms = new Date().getTime();
+  if(curr_ms-volt_ms[n]>=100){
+    volt_ms[n] = curr_ms
+    setvolt(n)
+  }
+}
+
+const volt_lock = reactive(Array(65).fill(0))
+
+function slidermousedown(n){
+  volt_lock[n] = 1
+}
+
+function slidermouseup(n){
+  volt_lock[n] = 0
+}
+
+async function getvolt(n){
+  try{
+    const res = await axios.get(`http://127.0.0.1:6661/getvolt?devid=${props.devid}&ch=${n}`)
+    if(volt_lock[n]==0){
+      volt[n] = res.data.volt;
+    }
+    amp[n]  = res.data.amp;
+  }catch(error){
+    console.log(`error in getvolt ${n}`,error)
+  }
+}
+
+const getvoltslock = ref(0)
+
+async function getvolts(){
+  if(getvoltslock.value>0){
+    console.log("another getvolts is running",getvoltslock)
+    return
+  }else{
+    getvoltslock.value += 1
+    for (var i = 1; i < volt.length; i++) {
+      await getvolt(i);
+    }
+    getvoltslock.value -= 1
+  }
+}
+
+const timer = ref();
 onMounted(() => {
-  ;
+  console.log("v1.5")
+  getvolts()
+  timer.value = setInterval(getvolts, 1000)
+})
+onUnmounted(() => {
+  clearInterval(timer.value)
 })
 
 </script>
