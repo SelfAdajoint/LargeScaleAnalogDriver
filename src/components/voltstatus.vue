@@ -62,9 +62,7 @@ const volt  = reactive(Array(65).fill(0.0));
 const amp   = reactive(Array(65).fill(0.0));
 const isable = reactive(Array(65).fill(true));
 
-const handleisable = (n)=>{
-  isable[n] != isable[n];
-  console.log(n, isable[n])
+function handleisable(n){
 }
 
 async function setvolt(n){
