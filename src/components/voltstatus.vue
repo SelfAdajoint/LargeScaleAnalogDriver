@@ -5,9 +5,9 @@
         <div class="grid-content-wrapper">
           <div class="chnum">{{ n }}</div>
           <div class="grid-content">
-            <div>+ {{ formatNumber(volt[n],8,3) }} V</div>
-            <div>+ {{ formatNumber(amp[n],8,3) }} mA</div>
-            <div>+ {{ formatNumber(volt[n]*amp[n],8,3) }} mW</div>
+            <div class="color1" :class="{ 'active': !isable[n] }">+ {{ formatNumber(volt[n],8,3) }} V</div>
+            <div class="color2" :class="{ 'active': !isable[n] }">+ {{ formatNumber(amp[n],8,3) }} mA</div>
+            <div class="color3" :class="{ 'active': !isable[n] }">+ {{ formatNumber(volt[n]*amp[n],8,3) }} mW</div>
             <div class="slider-demo-block">
                 <el-slider v-model="volt[n]" :min="0" :max="10" :step="0.01" size="small"
                   :format-tooltip="formatTooltip"
@@ -17,6 +17,18 @@
                   @mouseup="slidermouseup(n)"/>
                 <el-input-number v-model="volt[n]" :min="0" :max="10" :precision="3" :step="0.001" size="small"
                   @change="setvolt(n)"/>
+            </div>
+            <div class="isable-box">
+              <el-switch
+                v-model="isable[n]"
+                class="ml-2"
+                width="65"
+                inline-prompt
+                active-text="inable"
+                inactive-text="disable"
+                style="--el-switch-on-color: #337ab7;"
+                @change="handleisable(n)"
+              />
             </div>
           </div>
         </div>
@@ -29,7 +41,9 @@
 
 import { ref, reactive, onMounted, onUnmounted } from "vue";
 import axios from 'axios'
-
+// -------------------
+// import { inject } from "vue"
+// -------------------
 function formatTooltip(number){
   return number.toFixed(3)
 }
@@ -46,6 +60,12 @@ function formatNumber(num, width, precision) {
 const props = defineProps(["devid",]);
 const volt  = reactive(Array(65).fill(0.0));
 const amp   = reactive(Array(65).fill(0.0));
+const isable = reactive(Array(65).fill(true));
+
+const handleisable = (n)=>{
+  isable[n] != isable[n];
+  console.log(n, isable[n])
+}
 
 async function setvolt(n){
   axios.get(`http://127.0.0.1:6661/setvolt?devid=${props.devid}&ch=${n}&V=${volt[n]}`)
@@ -165,15 +185,15 @@ onUnmounted(() => {
     box-shadow: 0 2px 5px rgba(255, 255, 255, 0.5); /* 减少阴影以增强按压效果 */
 }
 
-.grid-content > div:nth-child(1){
+.color1{
   color: #337ab7;
 }
 
-.grid-content > div:nth-child(2){
+.color2{
   color: #f0ad4e;
 }
 
-.grid-content > div:nth-child(3){
+.color3{
   color: #d9534f;
 }
 
@@ -193,4 +213,12 @@ onUnmounted(() => {
 ::v-deep .el-input-number .el-input-group__prepend {
   background-color: #0797f0;
 }*/
+.isable-box{
+  display: flex;
+  justify-content: center;
+}
+.active{
+  color: #989595;
+  /* background-color: #d9534f; */
+}
 </style>
