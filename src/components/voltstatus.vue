@@ -27,7 +27,7 @@
                 active-text="inable"
                 inactive-text="disable"
                 style="--el-switch-on-color: #337ab7;"
-                @change="handleisable(n)"
+                
               />
             </div>
           </div>
@@ -62,10 +62,10 @@ const volt  = reactive(Array(65).fill(0.0));
 const amp   = reactive(Array(65).fill(0.0));
 const isable = reactive(Array(65).fill(true));
 
-const handleisable = (n)=>{
-  isable[n] != isable[n];
-  console.log(n, isable[n])
-}
+// const handleisable = (n)=>{
+//   // isable[n] != isable[n];
+//   // console.log(n, isable[n])
+// }
 
 async function setvolt(n){
   console.log(`setvolt ${n} ${volt[n]}`)

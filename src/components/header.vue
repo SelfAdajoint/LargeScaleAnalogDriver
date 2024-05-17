@@ -3,15 +3,16 @@ import { CircleCloseFilled,Sunny,Moon } from '@element-plus/icons-vue'
 import { ElButton, ElNotification } from 'element-plus'
 import axios from 'axios'
 import { useDark, useToggle } from "@vueuse/core";
-// import { provide } from 'vue'
+import { ref, provide } from 'vue'
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
 const props = defineProps(["devid",]);
 
-// const all_disable = ref(false)
+const all_disable = ref(false)
 // provide('isOpen', )
 const disableall = () => {
     alert(1)
+    
 }
 
 
