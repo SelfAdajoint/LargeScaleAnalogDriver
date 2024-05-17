@@ -11,10 +11,10 @@
             <div class="slider-demo-block">
                 <el-slider v-model="volt[n]" :min="0" :max="10" :step="0.01" size="small"
                   :format-tooltip="formatTooltip"
-                  @change="setvolt(n)"
-                  @input="setvolt_debounce(n)"
-                  @mousedown="slidermousedown(n)"
-                  @mouseup="slidermouseup(n)"/>
+                  @change="onsliderchange(n)"
+                  @input="onsliderinput(n)"
+                  @mousedown="lockvolt(n)"
+                  @focusout="releasevolt(n)"/>
                 <el-input-number v-model="volt[n]" :min="0" :max="10" :precision="3" :step="0.001" size="small"
                   @change="setvolt(n)"/>
             </div>
@@ -48,6 +48,7 @@ const volt  = reactive(Array(65).fill(0.0));
 const amp   = reactive(Array(65).fill(0.0));
 
 async function setvolt(n){
+  console.log(`setvolt ${n} ${volt[n]}`)
   axios.get(`http://127.0.0.1:6661/setvolt?devid=${props.devid}&ch=${n}&V=${volt[n]}`)
   .then(res => {
     if (!res.data.success){
@@ -61,8 +62,14 @@ async function setvolt(n){
 }
 
 const volt_ms = reactive(Array(65).fill(0))
+const volt_lock = reactive(Array(65).fill(0))
 
-function setvolt_debounce(n){
+function onsliderchange(n){
+  releasevolt(n)
+  setvolt(n)
+}
+
+function onsliderinput(n){
   const curr_ms = new Date().getTime();
   if(curr_ms-volt_ms[n]>=100){
     volt_ms[n] = curr_ms
@@ -70,19 +77,19 @@ function setvolt_debounce(n){
   }
 }
 
-const volt_lock = reactive(Array(65).fill(0))
-
-function slidermousedown(n){
+function lockvolt(n){
+  console.log(`lock ${n}`)
   volt_lock[n] = 1
 }
 
-function slidermouseup(n){
+function releasevolt(n){
+  console.log(`release ${n}`)
   volt_lock[n] = 0
 }
 
 async function getvolt(n){
   try{
-    const res = await axios.get(`http://127.0.0.1:6661/getvolt?devid=${props.devid}&ch=${n}`)
+    const res = await axios.get(`http://127.0.0.1:6661/getpowr?devid=${props.devid}&ch=${n}`)
     if(volt_lock[n]==0){
       volt[n] = res.data.volt;
     }
