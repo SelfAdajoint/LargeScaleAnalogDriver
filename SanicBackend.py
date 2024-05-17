@@ -6,7 +6,8 @@ from sanic import Sanic,json
 from sanic.response import file
 
 #ser = serial.Serial('COM15',baudrate=115200)
-ser = serial.Serial('/dev/ttyACM0',baudrate=115200)
+# ser = serial.Serial('/dev/ttyACM0',baudrate=115200)
+ser = serial.Serial('/dev/tty.usbserial-57670823091',baudrate=115200)
 
 app = Sanic("Q101HM")
 

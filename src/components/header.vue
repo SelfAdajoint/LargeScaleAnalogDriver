@@ -3,11 +3,17 @@ import { CircleCloseFilled,Sunny,Moon } from '@element-plus/icons-vue'
 import { ElButton, ElNotification } from 'element-plus'
 import axios from 'axios'
 import { useDark, useToggle } from "@vueuse/core";
-
+// import { provide } from 'vue'
 const isDark = useDark()
 const toggleDark = useToggle(isDark)
-
 const props = defineProps(["devid",]);
+
+// const all_disable = ref(false)
+// provide('isOpen', )
+const disableall = () => {
+    alert(1)
+}
+
 
 function emergencystop() {
   axios.get(`http://127.0.0.1:6661/emergencystop?devid=${props.devid}`)
@@ -41,14 +47,24 @@ function emergencystop() {
     <div class="header-page">
         <img src="/favicon.ico" :class="{ 'invert': !isDark }">
         <h2>Q101HM Large-scale High Power Analog Driver</h2>
-        <el-tooltip
-            class="box-item"
-            effect="light"
-            placement="left"
-            content="Set all Volts to zero."
-        >
-            <el-button type="danger" size="large" :icon="CircleCloseFilled" @click="emergencystop">EMO</el-button>
-        </el-tooltip>
+        <div>
+            <el-tooltip
+                class="box-item"
+                effect="light"
+                placement="left"
+                content="Set all Volts to zero."
+            >
+                <el-button type="danger" size="large" :icon="CircleCloseFilled" @click="emergencystop">EMO</el-button>
+            </el-tooltip>
+            <el-tooltip
+                class="box-item"
+                effect="light"
+                placement="left"
+                content="Set all Volts to zero."
+            >
+                <el-button type="warning" size="large" :icon="CircleCloseFilled" @click="disableall">WARNING</el-button>
+            </el-tooltip>
+        </div>
         <el-icon :size="60" @click="toggleDark()">
             <Moon v-if="isDark"/>
             <Sunny v-else />
@@ -82,10 +98,6 @@ function emergencystop() {
     .el-button{
         height: 60px;
         font-size: 20px;
-    }
-
-    .el-icon{
-
     }
 }
 </style>
