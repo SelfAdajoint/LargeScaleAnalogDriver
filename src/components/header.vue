@@ -3,17 +3,21 @@ import { CircleCloseFilled,Sunny,Moon } from '@element-plus/icons-vue'
 import { ElButton, ElNotification } from 'element-plus'
 import axios from 'axios'
 import { useDark, useToggle } from "@vueuse/core";
-import { ref, provide } from 'vue'
+import { ref } from 'vue'
+import { defineEmits } from 'vue'
+
 const isDark = useDark()
+const alldisable = ref(true)
 const toggleDark = useToggle(isDark)
 const props = defineProps(["devid",]);
+const emit = defineEmits(['alldisable'])
 
-const all_disable = ref(false)
-// provide('isOpen', )
+
 const disableall = () => {
-    alert(1)
-    
+    alldisable.value = !alldisable.value
+    emit('alldisable', alldisable.value) 
 }
+
 
 
 function emergencystop() {
@@ -48,6 +52,7 @@ function emergencystop() {
     <div class="header-page">
         <img src="/favicon.ico" :class="{ 'invert': !isDark }">
         <h2>Q101HM Large-scale High Power Analog Driver</h2>
+        {{alldisable}}
         <div>
             <el-tooltip
                 class="box-item"

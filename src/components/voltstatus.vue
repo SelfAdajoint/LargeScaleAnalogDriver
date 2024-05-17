@@ -5,7 +5,7 @@
         <div class="grid-content-wrapper">
           <div class="chnum">{{ n }}</div>
           <div class="grid-content">
-            <div class="color1" :class="{ 'active': !isable[n] }">+ {{ formatNumber(volt[n],8,3) }} V</div>
+            <div class="color1" :class="{ 'active': !isable[n] }">+ {{volt[n]}}{{ formatNumber(volt[n],8,3) }} V</div>
             <div class="color2" :class="{ 'active': !isable[n] }">+ {{ formatNumber(amp[n],8,3) }} mA</div>
             <div class="color3" :class="{ 'active': !isable[n] }">+ {{ formatNumber(volt[n]*amp[n],8,3) }} mW</div>
             <div class="slider-demo-block">
@@ -24,10 +24,9 @@
                 class="ml-2"
                 width="65"
                 inline-prompt
-                active-text="inable"
+                active-text="enable"
                 inactive-text="disable"
                 style="--el-switch-on-color: #337ab7;"
-                
               />
             </div>
           </div>
@@ -39,45 +38,53 @@
 
 <script setup>
 
-import { ref, reactive, onMounted, onUnmounted } from "vue";
+import { ref, reactive, onMounted, onUnmounted, watch } from "vue";
 import axios from 'axios'
-// -------------------
-// import { inject } from "vue"
-// -------------------
+
 function formatTooltip(number){
   return number.toFixed(3)
 }
 
 function formatNumber(num, width, precision) {
-  var formatted = num.toFixed(precision);
-  var padding = width - formatted.length;
-  if (padding > 0) {
-      formatted = '0'.repeat(padding) + formatted;
+  try{
+    var formatted = num.toFixed(precision);
+    var padding = width - formatted.length;
+    if (padding > 0) {
+        formatted = '0'.repeat(padding) + formatted;
+    }
+    return formatted;
+  }catch(error){
+    console.log(`error in getvolt ${num}`,error)
   }
-  return formatted;
+  return String(num)
 }
 
-const props = defineProps(["devid",]);
+const props = defineProps(["devid","isoff"]);
 const volt  = reactive(Array(65).fill(0.0));
 const amp   = reactive(Array(65).fill(0.0));
 const isable = reactive(Array(65).fill(true));
 
-// const handleisable = (n)=>{
-//   // isable[n] != isable[n];
-//   // console.log(n, isable[n])
-// }
+// -------------
+watch(() =>props.isoff, (newValue, oldValue) => {
+  console.log(newValue, oldValue)
+  isable.fill(newValue);
+}, { immediate: true });
 
+function handleisable(n){
+  
+}
+// -------------
 async function setvolt(n){
   console.log(`setvolt ${n} ${volt[n]}`)
   axios.get(`http://127.0.0.1:6661/setvolt?devid=${props.devid}&ch=${n}&V=${volt[n]}`)
   .then(res => {
     if (!res.data.success){
-      console.log(`setvolt ch $n failed`,res.data)
+      // console.log(`setvolt ch $n failed`,res.data)
     }
     setTimeout(()=>{getvolt(n);}, 50)
   })
   .catch(error => {
-    console.log(`error in setvolt ${n}`,error)
+    // console.log(`error in setvolt ${n}`,error)
   })
 }
 
@@ -110,12 +117,17 @@ function releasevolt(n){
 async function getvolt(n){
   try{
     const res = await axios.get(`http://127.0.0.1:6661/getpowr?devid=${props.devid}&ch=${n}`)
-    if(volt_lock[n]==0){
-      volt[n] = res.data.volt;
+     //console.log(res)
+    if(res.data.success){
+      if(volt_lock[n]==0){
+        volt[n] = res.data.volt;
+      }
+      amp[n]  = res.data.amp;
+    }else{
+      // console.log(`error in getvolt ${n}`,res.data)
     }
-    amp[n]  = res.data.amp;
   }catch(error){
-    console.log(`error in getvolt ${n}`,error)
+    // console.log(`error in getvolt ${n}`,error)
   }
 }
 
@@ -128,7 +140,12 @@ async function getvolts(){
   }else{
     getvoltslock.value += 1
     for (var i = 1; i < volt.length; i++) {
-      await getvolt(i);
+      if(isable[i]){
+        await getvolt(i);
+        console.log("请求")
+      }else{
+        console.log("不请求")
+      }
     }
     getvoltslock.value -= 1
   }

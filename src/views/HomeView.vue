@@ -2,13 +2,18 @@
 import Header from "@/components/header.vue";
 import Voltstatus from "@/components/voltstatus.vue";
 import Footer from "@/components/footer.vue";
+import { ref } from 'vue'
+const emitvalue= ref(true)
+const isAlldisable = (isoff) => {
+  emitvalue.value = isoff
+}
 </script>
 
 <template>
   <div class="container">
-    <Header devid="09df2712"/>
+    <Header devid="09df2712" @alldisable="isAlldisable"/>
     <div class="voltstatus">
-      <Voltstatus devid="09df2712"/>
+      <Voltstatus devid="09df2712" :isoff="emitvalue" />
     </div>
     <div class="footer">
       <Footer />
