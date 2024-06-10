@@ -7,44 +7,55 @@ import { ref } from 'vue'
 import { defineEmits } from 'vue'
 
 const isDark = useDark()
-const alldisable = ref(true)
 const toggleDark = useToggle(isDark)
 const props = defineProps(["devid",]);
-const emit = defineEmits(['alldisable'])
+
+// const alldisable = ref(true)
+// const emit = defineEmits(['alldisable'])
+
+// async function disableall(){
+//     // alldisable.value = false
+//     try{
+//         const res = await axios.get(`http://127.0.0.1:6661/disableall?devid=${props.devid}`)
+//         if(res.data.success){
+//             //emit('alldisable', alldisable.value)
+//             emit('alldisable', false)
+//         }else{
+//             console.log(`error in disableall`,res.data)
+//         }
+//     }catch(error){
+//         console.log(`error in disableall`,error)
+//     }
+// }
 
 
-const disableall = () => {
-    alldisable.value = !alldisable.value
-    emit('alldisable', alldisable.value) 
-}
-
-
-
+const emitemo = defineEmits(['emo'])
 function emergencystop() {
-  axios.get(`http://127.0.0.1:6661/emergencystop?devid=${props.devid}`)
-  .then(res => {
-    if (!res.data.success){
-        console.log('emergency stop failed',res.data);
+    // emitemo('emo')
+    try{
+        const res  = axios.get(`http://127.0.0.1:6661/emergencystop?devid=${props.devid}`)
+        if (!res.data.success){
+            console.log('emergency stop failed',res.data);
+            ElNotification({
+                title: 'Emergency stop failed!',
+                message: res.data.message,
+                type: 'error',
+            })
+        }else{
+
+            ElNotification({
+                title: 'Emergency stop success.',
+                type: 'success',
+            })
+        }
+    }catch(error){
+        console.error('Emergency stop error:', error);
         ElNotification({
             title: 'Emergency stop failed!',
-            message: res.data.message,
+            message: error,
             type: 'error',
         })
-    }else{
-        ElNotification({
-            title: 'Emergency stop success.',
-            type: 'success',
-        })
     }
-  })
-  .catch(error => {
-    console.error('Emergency stop error:', error);
-    ElNotification({
-        title: 'Emergency stop failed!',
-        message: error,
-        type: 'error',
-    })
-  })
 }
 </script>
 
@@ -52,7 +63,6 @@ function emergencystop() {
     <div class="header-page">
         <img src="/favicon.ico" :class="{ 'invert': !isDark }">
         <h2>Q101HM Large-scale High Power Analog Driver</h2>
-        {{alldisable}}
         <div>
             <el-tooltip
                 class="box-item"
@@ -62,14 +72,14 @@ function emergencystop() {
             >
                 <el-button type="danger" size="large" :icon="CircleCloseFilled" @click="emergencystop">EMO</el-button>
             </el-tooltip>
-            <el-tooltip
+            <!-- <el-tooltip
                 class="box-item"
                 effect="light"
                 placement="left"
                 content="Set all Volts to zero."
             >
-                <el-button type="warning" size="large" :icon="CircleCloseFilled" @click="disableall">WARNING</el-button>
-            </el-tooltip>
+                <el-button type="warning" size="large" :icon="CircleCloseFilled" @click="disableall">ALL OFF</el-button>
+            </el-tooltip> -->
         </div>
         <el-icon :size="60" @click="toggleDark()">
             <Moon v-if="isDark"/>
